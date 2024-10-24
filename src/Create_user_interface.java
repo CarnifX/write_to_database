@@ -1,5 +1,7 @@
 import javax.swing.*;
 
+//Denne klassen fokuserer på å lage en user interface for innlogging til et brukersystem.
+//Foreløpig har jeg bare sett på oppretting av ny bruker.
 public class Create_user_interface {
 
     public static void create_user_interface(){
@@ -12,7 +14,7 @@ public class Create_user_interface {
         frame.add(panel);
         panel.setLayout(null);
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+
 
         JLabel username = new JLabel("Username: ");
         username.setBounds(30, 20, 100, 25);
@@ -42,12 +44,14 @@ public class Create_user_interface {
         cancelButton.setBounds(30, 100, 80, 25);
         panel.add(cancelButton);
 
+        frame.setVisible(true);
         frame.getRootPane().setDefaultButton(acceptButton);
 
         acceptButton.addActionListener(e -> {
             String written_username = userText.getText();
             String written_password = String.valueOf(passwordText.getPassword());
         });
+
         signUpButton.addActionListener(ActionEvent -> Create_new_member.newMember());
         cancelButton.addActionListener(ActionEvent -> frame.dispose());
 

@@ -4,6 +4,8 @@ import java.sql.*;
 
 //Klassen 'CreateNewMember' åpner en user interface hvor man kan opprette en ny bruker.
 //Infoen man skriver inn blir automatisk lagret på en lokal SQL server.
+//Passord blir foreløpig ikke behandlet på en ordentlig måte, og blir
+//bare lagret vanlig i databasen. Skal se over hashing, salting, etc senere.
 public class Create_new_member {
 
     public static void newMember(){
@@ -17,7 +19,7 @@ public class Create_new_member {
 
         panel.setLayout(null);
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+
 
         JLabel userName = new JLabel("Username: ");
         userName.setBounds(10, 20, 100, 25);
@@ -60,6 +62,7 @@ public class Create_new_member {
         panel.add(cancelButton);
 
         frame.getRootPane().setDefaultButton(acceptButton);
+        frame.setVisible(true);
 
         acceptButton.addActionListener(e -> {
             String newUsername = userText.getText();
@@ -69,11 +72,14 @@ public class Create_new_member {
 
             String newUserInfo = "insert into members values (DEFAULT, '" + newUsername + "', '" + newPassword + "', '" + newEmail + "', '" + newPhoneNumber + "')";
 
-            try {
-                Main.statement.executeUpdate(newUserInfo);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+            if (Logistic_database_methods.checkIfInputsAreValid(newUsername, newPassword, newEmail, newPhoneNumber)) {
+                try {
+                    Main.statement.executeUpdate(newUserInfo);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
+
             frame.dispose();
         });
 
