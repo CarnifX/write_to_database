@@ -85,12 +85,14 @@ public class Create_new_member {
                     preparedStatement.setString(3, newEmail);
                     preparedStatement.setString(4, newPhoneNumber);
                     preparedStatement.executeUpdate();
+
+                    frame.dispose();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
             }
 
-            frame.dispose();
+
         });
 
         cancelButton.addActionListener(ActionEvent -> frame.dispose());

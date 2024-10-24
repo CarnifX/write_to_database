@@ -1,10 +1,23 @@
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 //Denne klassen fokuserer på å lage en user interface for innlogging til et brukersystem.
 //Foreløpig har jeg bare sett på oppretting av ny bruker.
 public class Create_user_interface {
 
-    public static void create_user_interface(){
+    private final Object lock;
+
+
+    public Create_user_interface(Object lock){
+        this.lock = lock;
+        AtomicBoolean login = new AtomicBoolean(false);
+        AtomicReference<String> written_email = new AtomicReference<>();
+        AtomicReference<String> written_password = new AtomicReference<>();
 
         JFrame frame = new JFrame("Login");
         JPanel panel = new JPanel();
@@ -16,13 +29,13 @@ public class Create_user_interface {
         frame.setLocationRelativeTo(null);
 
 
-        JLabel username = new JLabel("Username: ");
-        username.setBounds(30, 20, 100, 25);
-        panel.add(username);
+        JLabel email = new JLabel("E-mail: ");
+        email.setBounds(30, 20, 100, 25);
+        panel.add(email);
 
-        JTextField userText = new JTextField();
-        userText.setBounds(120, 20, 165, 25);
-        panel.add(userText);
+        JTextField emailText = new JTextField();
+        emailText.setBounds(120, 20, 165, 25);
+        panel.add(emailText);
 
         JLabel password = new JLabel("Password: ");
         password.setBounds(30, 50, 100, 25);
@@ -47,13 +60,31 @@ public class Create_user_interface {
         frame.setVisible(true);
         frame.getRootPane().setDefaultButton(acceptButton);
 
-        acceptButton.addActionListener(e -> {
-            String written_username = userText.getText();
-            String written_password = String.valueOf(passwordText.getPassword());
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                synchronized (lock) {
+                    lock.notify(); // Notify the main thread to continue
+                }
+                frame.dispose(); // Dispose of the JFrame
+            }
         });
 
-        signUpButton.addActionListener(ActionEvent -> Create_new_member.newMember());
-        cancelButton.addActionListener(ActionEvent -> frame.dispose());
+            acceptButton.addActionListener(ActionEvent -> {
+                written_email.set(String.valueOf(emailText.getText()));
+                written_password.set(String.valueOf(passwordText.getPassword()));
+                List<String> user_info = Logistic_database_methods.getUserInfo(String.valueOf(written_email));
+
+                if (String.valueOf(written_password).equals(user_info.get(2))) {
+                    synchronized (lock) {
+                        lock.notify(); // Notify the main thread to continue
+                    }
+                    frame.dispose();
+                }
+            });
+
+            signUpButton.addActionListener(ActionEvent -> Create_new_member.newMember());
+            cancelButton.addActionListener(ActionEvent -> frame.dispose());
 
 
     }
