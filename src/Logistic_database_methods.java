@@ -20,7 +20,6 @@ public class Logistic_database_methods {
             String query = "SELECT 1 FROM sql_memberserver.members WHERE email = ? LIMIT 1";
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, email);
-
             resultSet = preparedStatement.executeQuery();
 
             return resultSet.next();

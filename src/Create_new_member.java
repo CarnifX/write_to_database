@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.sql.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 //Klassen 'CreateNewMember' åpner en user interface hvor man kan opprette en ny bruker.
@@ -9,6 +10,8 @@ import java.sql.*;
 public class Create_new_member {
 
     public static void newMember(){
+
+
 
         JFrame frame = new JFrame("New member!");
         JPanel panel = new JPanel();
@@ -70,11 +73,18 @@ public class Create_new_member {
             String newEmail = emailText.getText();
             String newPhoneNumber = phoneNumberText.getText();
 
-            String newUserInfo = "insert into members values (DEFAULT, '" + newUsername + "', '" + newPassword + "', '" + newEmail + "', '" + newPhoneNumber + "')";
 
             if (Logistic_database_methods.checkIfInputsAreValid(newUsername, newPassword, newEmail, newPhoneNumber)) {
                 try {
-                    Main.statement.executeUpdate(newUserInfo);
+                    Connection connection = Main.connection;
+                    PreparedStatement preparedStatement = null;
+                    String query_to_set_new_user = "insert into members values (DEFAULT, ?, ?, ?, ?)";
+                    preparedStatement = connection.prepareStatement(query_to_set_new_user);
+                    preparedStatement.setString(1, newUsername);
+                    preparedStatement.setString(2, newPassword);
+                    preparedStatement.setString(3, newEmail);
+                    preparedStatement.setString(4, newPhoneNumber);
+                    preparedStatement.executeUpdate();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
