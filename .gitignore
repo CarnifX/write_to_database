@@ -1,0 +1,7 @@
+### IntelliJ IDEA ###
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+write_to_database.iml
+.idea
+serverinfo.env
